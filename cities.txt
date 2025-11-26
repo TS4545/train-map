@@ -1,0 +1,178 @@
+Austin,30.267,-97.743 
+Atlanta,33.7490,-84.3880
+Augusta,33.4735,-82.0105
+Baltimore,39.2904,-76.6122
+Birmingham,33.5186,-86.8163
+Boston,42.3601,-71.0589
+Buffalo,42.8864,-78.8784
+Charlotte,35.2271,-80.8431
+Charleston,32.7766,-79.9310
+Chicago,41.8781,-87.6298
+Cincinnati,39.1031,-84.5120
+Cleveland,41.4993,-81.6944
+Columbia,34.0007,-81.0348
+Columbus,39.9612,-82.9988
+Dallas,32.7767,-96.7970
+Dayton,39.7589,-84.1916
+Denver,39.7392,-104.9903
+Des Moines,41.6005,-93.6091
+Detroit,42.3314,-83.0458
+El Paso,31.7619,-106.4850
+Fort Worth,32.7555,-97.3308
+Grand Rapids,42.9634,-85.6681
+Green Bay,44.5192,-88.0198
+Harrisburg,40.2732,-76.8837
+Houston,29.7604,-95.3698
+Indianapolis,39.7684,-86.1580
+Jacksonville,30.3322,-81.6557
+Kansas City,39.0997,-94.5786
+Knoxville,35.9606,-83.9207
+Las Vegas,36.1716,-115.1391
+Little Rock,34.7465,-92.2896
+Long Beach,33.7701,-118.1937
+Los Angeles,34.0522,-118.2437
+Louisville,38.2527,-85.7585
+Memphis,35.1495,-90.0490
+Miami,25.7617,-80.1918
+Milwaukee,43.0389,-87.9065
+Minneapolis,44.9778,-93.2650
+Mobile,30.6954,-88.0399
+Nashville,36.1627,-86.7816
+New Orleans,29.9511,-90.0715
+New York,40.7128,-74.0060
+Oakland,37.8044,-122.2712
+Oklahoma City,35.4676,-97.5164
+Omaha,41.2565,-95.9345
+Philadelphia,39.9526,-75.1652
+Phoenix,33.4484,-112.0740
+Pittsburgh,40.4406,-79.9959
+Portland,45.5152,-122.6784
+Raleigh,35.7796,-78.6382
+Richmond,37.5407,-77.4360
+Sacramento,38.5816,-121.4944
+Salt Lake City,40.7608,-111.8910
+San Antonio,29.4241,-98.4936
+San Bernardino,34.1083,-117.2898
+San Diego,32.7157,-117.1611
+San Francisco,37.7749,-122.4194
+San Jose,37.3382,-121.8863
+Seattle,47.6062,-122.3321
+Spokane,47.6588,-117.4260
+St. Louis,38.6270,-90.1994
+Tacoma,47.2529,-122.4443
+Tampa,27.9475,-82.4588
+Toledo,41.6639,-83.5552
+Tulsa,36.1540,-95.9928
+Tucson,32.2217,-110.9265
+Vancouver (WA),45.6280,-122.6738
+Washington,38.9072,-77.0369
+Wichita,37.6872,-97.3301
+Wilmington (DE),39.7447,-75.5484
+Winnipeg (MB),49.8954,-97.1385
+Aberdeen (SD),45.4644,-98.4851
+Albany,42.6526,-73.7562
+Amarillo,35.2220,-101.8313
+Anchorage,61.2181,-149.9003
+Bakersfield,35.3733,-119.0187
+Billings,45.7833,-108.5007
+Boise,43.6150,-116.2023
+Calgary (AB),51.0486,-114.0708
+Cheyenne,41.1400,-104.8202
+Council Bluffs,41.2562,-95.8504
+Duluth,46.7867,-92.1005
+Edmonton (AB),53.5461,-113.4938
+Eugene,44.0521,-123.0868
+Fargo,46.8772,-96.7898
+Fremont,41.4428,-96.4892
+Grand Forks,47.9253,-97.0329
+Greenville,34.8526,-82.3940
+Halifax (NS),44.6488,-63.5752
+Helena,46.5944,-112.0298
+Jackson (MS),32.2988,-90.1848
+Jefferson City,38.5767,-92.1735
+Juneau,58.3019,-134.4197
+Lafayette (IN),40.4137,-86.8749
+Lansing,42.7325,-84.5555
+Lincoln,40.8136,-96.7026
+Madison,43.0731,-89.4012
+Manchester (NH),42.9902,-71.4637
+Medford,42.3265,-122.8756
+Mobile,30.6954,-88.0399
+Montreal (QC),45.5019,-73.5674
+North Platte,41.1239,-100.7654
+Olympia,47.0379,-122.9007
+Orlando,28.5383,-81.3792
+Ottawa (ON),45.4215,-75.6972
+Peoria,40.6936,-89.5889
+Petersburg,37.2254,-77.4019
+Providence,41.8240,-71.4128
+Pueblo,38.2544,-104.6091
+Reno,39.5296,-119.8138
+Roanoke,37.2709,-79.9414
+Rochester,43.1566,-77.6088
+Salt Lake City,40.7608,-111.8910
+Saskatoon (SK),52.1332,-106.6700
+Savannah,32.0812,-81.0912
+Scranton,41.4085,-75.6602
+Shreveport,32.5252,-93.7501
+Sioux Falls,43.5460,-96.7317
+Springfield (IL),39.8000,-89.6384
+St. Paul,44.9537,-93.0900
+Syracuse,43.0481,-76.1474
+Tallahassee,30.4383,-84.2807
+Thunder Bay (ON),48.3809,-89.2477
+Topeka,39.0473,-95.6764
+Toronto (ON),43.6532,-79.3832
+Trenton,40.2204,-74.7669
+Tucson,32.2217,-110.9265
+Utica,43.1009,-75.2327
+Vancouver (BC),49.2827,-123.1207
+Victoria (BC),48.4284,-123.3656
+Waco,31.5493,-97.1467
+Worcester,42.2626,-71.8023
+Yakima,46.6022,-120.5050
+Yuma,32.6927,-114.6277
+Further Rail Hubs:
+Altoona,40.5228,-78.3975
+Barstow,34.9000,-117.0167
+Belen,34.6648,-106.7725
+Casper,42.8667,-106.3131
+Cleburne,32.3667,-97.3881
+Clovis,34.4034,-103.2058
+Corpus Christi,27.8006,-97.3995
+Crestline,40.9000,-82.7667
+Dover,39.1582,-75.5244
+Florence,34.1957,-79.7617
+Fort Madison,40.6389,-91.3149
+Galesburg,40.9411,-90.3718
+Gillette,44.2980,-105.5000
+Grand Island,40.9265,-98.3703
+Hamlet,34.8963,-79.7042
+Havre,48.5522,-109.6853
+Huntington (WV),38.4195,-82.4452
+Joliet,41.5250,-88.0844
+Kankakee,41.1214,-87.8596
+La Grange,39.7733,-95.7739
+Lebanon,40.3423,-76.4258
+Needles,34.8500,-114.6139
+Newark (NJ),40.7357,-74.1724
+Ogden,41.2230,-111.9738
+Palmdale,34.5800,-118.1167
+Pasco,46.2343,-119.1000
+Pocatello,42.8710,-112.4200
+Portsmouth,38.7333,-83.0083
+Provo,40.2330,-111.6660
+Reading,40.3356,-75.9269
+Redding,40.5865,-122.3917
+Rochelle,41.9189,-89.1039
+Roseville,38.7456,-121.2721
+San Luis Obispo,35.2828,-120.6596
+Selkirk,42.5350,-73.8042
+Stockton,37.9577,-121.2908
+Texarkana,33.4250,-94.0470
+Toledo,41.6639,-83.5552
+Waycross,31.5546,-82.3551
+West Memphis,35.1578,-90.1874
+Williston,48.1408,-103.6189
+Winchester (VA),39.1856,-78.1672
+York,39.9623,-76.7297

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freight Rail Highlighter</title>
+    <!-- Load Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Set a dark background for the body and ensure full height */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #1f2937; /* Dark Grey background */
+        }
+        /* Ensure the map container takes the remaining space */
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fixed Alert Container: Will display errors without shifting the layout -->
+    <div id="fixed-alert-container" class="fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-sm z-50 p-4 transition-transform duration-300 opacity-0 translate-y-[-100%] pointer-events-none">
+        <!-- Content inserted by JS alert() function -->
+    </div>
+
+    <header class="p-4 bg-gray-800 text-white shadow-lg flex flex-col sm:flex-row sm:items-center justify-between">
+        <div class="mb-2 sm:mb-0">
+            <h1 class="text-xl font-bold">Railway Track Visualizer</h1>
+            <p id="status-message" class="text-sm text-yellow-400">
+                Loading city data from cities.txt...
+            </p>
+        </div>
+        
+        <!-- City Search Input -->
+        <div class="flex space-x-2">
+            <input 
+                type="text" 
+                id="city-input" 
+                placeholder="Enter city name..."
+                class="p-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500 w-40 sm:w-56 disabled:opacity-50"
+                disabled
+            >
+            <button 
+                id="search-button"
+                class="p-2 rounded-lg bg-red-600 hover:bg-red-700 transition duration-150 font-semibold shadow-md disabled:opacity-50"
+                disabled
+            >
+                Search
+            </button>
+        </div>
+    </header>
+
+    <div id="map" class="flex-grow"></div>
+
+    <!-- 
+        The initMap function must be defined in the global scope so the Google Maps API loader can reliably call it. 
+    -->
+    <script>
+        // Global variables for the map and city data
+        let map; 
+        let CITIES = {}; 
+        
+        // Function to process the raw data string (read from the fetched file) into a usable CITIES object
+        function loadCityData(rawData) {
+            const lines = rawData.trim().split('\n');
+            const data = {};
+            let successCount = 0;
+
+            lines.forEach(line => {
+                const parts = line.trim().split(',');
+                // Expects format: City,Latitude,Longitude
+                if (parts.length === 3) {
+                    const name = parts[0].trim().toUpperCase();
+                    const lat = parseFloat(parts[1]);
+                    const lng = parseFloat(parts[2]);
+                    
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        data[name] = { lat, lng };
+                        successCount++;
+                    }
+                }
+            });
+
+            if (successCount > 0) {
+                CITIES = data;
+                // Enable search functionality
+                document.getElementById('city-input').disabled = false;
+                document.getElementById('search-button').disabled = false;
+                document.getElementById('status-message').textContent = `${successCount} cities loaded`;
+                
+                // Set initial map center to the first city found in the file
+                const firstCityName = Object.keys(CITIES)[0];
+                if (firstCityName && map) {
+                    map.setCenter(CITIES[firstCityName]);
+                    map.setZoom(11);
+                }
+            } else {
+                 document.getElementById('status-message').textContent = "Error: Could not load city data. Check cities.txt format.";
+                 alert("File content error. Ensure your cities.txt is formatted correctly (City,Lat,Lng on each line).");
+            }
+        }
+        
+        // Function to fetch the city data file
+        async function fetchCityData() {
+            document.getElementById('status-message').textContent = "Attempting to load data from cities.txt...";
+            try {
+                // This request requires running a local web server (like Python's http.server)
+                const response = await fetch('cities.txt'); 
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const rawData = await response.text();
+                loadCityData(rawData);
+
+            } catch (error) {
+                console.error("Fetch failed:", error);
+                document.getElementById('status-message').textContent = "ERROR: Failed to fetch cities.txt. Are you running a local web server?";
+                alert("Failed to load cities.txt. Please run a local web server (e.g., using Python) and ensure cities.txt is in the same folder.");
+            }
+        }
+
+
+        // Define the JSON style array to customize the map appearance
+        function getRailStyle() {
+            return [
+                // 1. Darken and desaturate the entire map by default
+                {
+                    "featureType": "all",
+                    "elementType": "geometry",
+                    "stylers": [
+                        { "color": "#242f3e" }
+                    ]
+                },
+                {
+                    "featureType": "all",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        { "color": "#746855" }
+                    ]
+                },
+                {
+                    "featureType": "all",
+                    "elementType": "labels.text.stroke",
+                    "stylers": [
+                        { "color": "#242f3e" }
+                    ]
+                },
+                
+                // 2. Dim Road Networks (GEOMETRY)
+                {
+                    "featureType": "road",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        { "color": "#2f3947" }
+                    ]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "geometry.stroke",
+                    "stylers": [
+                        { "color": "#1f2937" }
+                    ]
+                },
+                
+                // FIXED: Hide ALL Road/Highway/Street Labels
+                {
+                    "featureType": "road",
+                    "elementType": "labels",
+                    "stylers": [
+                        { "visibility": "off" }
+                    ]
+                },
+                
+                // 3. Emphasize Transit Lines (This includes all rail lines)
+                {
+                    "featureType": "transit.line",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        { "color": "#ff6347" }, // Bright Tomato Red/Orange
+                        { "weight": 5 }         // Significantly thicker line
+                    ]
+                },
+                // HIGHLIGHT NAMES/LABELS: Make the text labels for the rail lines bright white
+                {
+                    "featureType": "transit.line",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        { "color": "#FFFFFF" }
+                    ]
+                },
+                // HIGHLIGHT NAMES/LABELS: Add a strong black outline to make the white text pop against the red line
+                {
+                    "featureType": "transit.line",
+                    "elementType": "labels.text.stroke",
+                    "stylers": [
+                        { "color": "#000000" }, 
+                        { "weight": 2 } // Make the outline thick
+                    ]
+                },
+                {
+                    "featureType": "transit.line",
+                    "elementType": "geometry.stroke",
+                    "stylers": [
+                        { "color": "#ff9a85" }, // Lighter stroke for definition
+                        { "weight": 1 }
+                    ]
+                },
+                
+                // 4. Hide points of interest and water labels for cleaner view
+                {
+                    "featureType": "poi",
+                    "stylers": [
+                        { "visibility": "off" }
+                    ]
+                },
+                {
+                    "featureType": "water",
+                    "stylers": [
+                        { "color": "#18324a" }
+                    ]
+                },
+                {
+                    "featureType": "water",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        { "color": "#515c6d" }
+                    ]
+                },
+
+                // 5. Suppress labels for small administrative divisions (neighborhoods, land parcels)
+                {
+                    "featureType": "administrative.land_parcel",
+                    "stylers": [
+                        { "visibility": "off" }
+                    ]
+                },
+                {
+                    "featureType": "administrative.neighborhood",
+                    "stylers": [
+                        { "visibility": "off" }
+                    ]
+                },
+                {
+                    "featureType": "landscape.man_made",
+                    "elementType": "labels",
+                    "stylers": [
+                        { "visibility": "off" }
+                    ]
+                }
+            ];
+        }
+
+        // Function to handle the city search and map centering
+        function searchCity() {
+            if (Object.keys(CITIES).length === 0) {
+                 alert("City data is not loaded yet. Please wait or check your server setup.");
+                 return;
+            }
+            
+            const input = document.getElementById('city-input').value.trim().toUpperCase();
+            
+            if (input.length === 0) return; // Do nothing if input is empty
+
+            const cityData = CITIES[input];
+
+            if (cityData && map) {
+                // Set the center of the map to the new city
+                map.setCenter(cityData);
+                // Set the zoom level to 11 (close enough for immediate rail label visibility)
+                map.setZoom(11); 
+            } else {
+                // Use a custom message box instead of alert()
+                alert(`City "${input}" not found in the loaded data!`);
+            }
+        }
+        
+        // Custom alert function that uses the fixed container
+        function alert(message) {
+            console.error("Custom Alert:", message);
+            const alertContainer = document.getElementById('fixed-alert-container');
+            
+            // Generate smaller alert content
+            alertContainer.innerHTML = `
+                <div class="bg-yellow-400 text-gray-900 text-sm p-2 rounded-lg shadow-xl flex justify-between items-center pointer-events-auto">
+                    ${message}
+                    <button onclick="document.getElementById('fixed-alert-container').classList.remove('opacity-100', 'translate-y-0'); document.getElementById('fixed-alert-container').classList.add('opacity-0', 'translate-y-[-100%]');" class="text-lg font-bold ml-3">&times;</button>
+                </div>
+            `;
+
+            // Show the alert (move it into view)
+            alertContainer.classList.add('opacity-100', 'translate-y-0');
+            alertContainer.classList.remove('opacity-0', 'translate-y-[-100%]');
+
+            // Hide after 5 seconds
+            setTimeout(() => {
+                alertContainer.classList.remove('opacity-100', 'translate-y-0');
+                alertContainer.classList.add('opacity-0', 'translate-y-[-100%]');
+            }, 5000); 
+        }
+
+        // Initialize the map (This function is called by the Google Maps API)
+        function initMap() {
+            // Initial center set to a regional view of the US
+            const initialCenter = { lat: 39.8283, lng: -98.5795 }; 
+
+            map = new google.maps.Map(document.getElementById('map'), {
+                // Zoom level 4 for a wide US view
+                zoom: 4, 
+                center: initialCenter, 
+                mapTypeId: 'roadmap',
+                styles: getRailStyle(), 
+                mapTypeControl: true,
+                streetViewControl: false,
+                fullscreenControl: true,
+            });
+            
+            // Start fetching data immediately
+            fetchCityData();
+            
+            // Add event listeners for the search feature
+            document.getElementById('search-button').addEventListener('click', searchCity);
+            document.getElementById('city-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchCity();
+                }
+            });
+        }
+    </script>
+    
+    <!-- 
+        --- Mandatory Firebase Boilerplate (must be in a module script) ---
+    -->
+    <script type="module">
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Minimal Firebase Setup (required to be present)
+        let app, db, auth;
+        if (Object.keys(firebaseConfig).length > 0) {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            // Sign in, either with custom token or anonymously
+            const initializeAuth = async () => {
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Firebase Auth failed:", error);
+                }
+            };
+            initializeAuth();
+        }
+    </script>
+
+    <!-- Load the Google Maps API Script -->
+    <!-- The API key is set here and calls the globally available initMap function -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGRgFEQZhoe3zpHw6Gq2mWFQlGgJEirBw&callback=initMap"></script>
+
+</body>
+</html>
