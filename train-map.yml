@@ -1,47 +1,31 @@
-name: Train Map
+name: Deploy Train Map
 
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - main # or master
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js (for simple build/test environment)
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies (if you had any)
-        # Assuming you would install dependencies here if you were using a framework
-        # run: npm install
-
-      - name: Run Build or Test Script (Example Step)
-        # This is where your code runs. The secret is passed securely as an environment variable.
+      # --- NEW STEP: Inject API Key ---
+      - name: Inject Google Maps API Key
         run: |
-          echo "Running application build or test suite..."
-          # Replace 'your_command_here' with the actual command to use the key.
-          # For example, a frontend build command that needs the key injected.
-          echo "API Key check: ${{ secrets.GOOGLE_MAPS_API_KEY }}"
-          
-          # In a real app, you would use this env var:
-          # run: YOUR_BUILD_COMMAND --api-key ${{ secrets.GOOGLE_MAPS_API_KEY }}
-
-        # Define the environment variable (ENV) for this step
+          # Use 'sed' to replace the placeholder with the secret value
+          # The secret is accessed via the environment variable MAPS_API
+          # which is set in the 'env' block below.
+          sed -i 's|%API_KEY_PLACEHOLDER%|${{ secrets.MAPS_API }}|g' index.html
         env:
-          # This variable name (MAPS_API_KEY) is what your application code might look for.
-          # We map the GitHub Secret (GOOGLE_MAPS_API_KEY) to a simple ENV name here.
-          MAPS_API: ${{secrets.MAPS_API}}
-          
-      - name: Deployment (Example)
-        # This step would deploy your files to a hosting service.
-        run: echo "Deployment complete using the hidden key."
+          # This line makes the secret available to the 'run' command as an environment variable
+          MAPS_API: ${{ secrets.MAPS_API }}
+      # ---------------------------------
+
+      # Step to deploy using GitHub Pages action (example)
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
