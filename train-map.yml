@@ -1,0 +1,47 @@
+name: Train Map
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (for simple build/test environment)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies (if you had any)
+        # Assuming you would install dependencies here if you were using a framework
+        # run: npm install
+
+      - name: Run Build or Test Script (Example Step)
+        # This is where your code runs. The secret is passed securely as an environment variable.
+        run: |
+          echo "Running application build or test suite..."
+          # Replace 'your_command_here' with the actual command to use the key.
+          # For example, a frontend build command that needs the key injected.
+          echo "API Key check: ${{ secrets.GOOGLE_MAPS_API_KEY }}"
+          
+          # In a real app, you would use this env var:
+          # run: YOUR_BUILD_COMMAND --api-key ${{ secrets.GOOGLE_MAPS_API_KEY }}
+
+        # Define the environment variable (ENV) for this step
+        env:
+          # This variable name (MAPS_API_KEY) is what your application code might look for.
+          # We map the GitHub Secret (GOOGLE_MAPS_API_KEY) to a simple ENV name here.
+          MAPS_API: ${{secrets.MAPS_API}}
+          
+      - name: Deployment (Example)
+        # This step would deploy your files to a hosting service.
+        run: echo "Deployment complete using the hidden key."
